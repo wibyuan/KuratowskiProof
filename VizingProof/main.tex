@@ -7,6 +7,7 @@
 % 核心说明：
 % 1. 本文档旨在整理 Vizing 定理在简单图与多重图下的证明逻辑。
 % 2. 包含 Shannon 定理的证明思路。
+% 3. 图片采用外部占位符格式。
 %
 % 权利声明：
 % 允许学术引用与非商业用途的分发。严禁在未注明原作者的情况下进行篡改、
@@ -566,7 +567,7 @@
             % e0
             \ifnum#2=0 \draw[edge_style, black] (xc) -- node[pos=0.6, font=\tiny\bfseries] {待染色} (y0); \else \draw[edge_style, cRed] (xc) -- (y0); \fi
             % e1
-            \ifnum#2=2 \draw[edge_style, cRed] (xc) -- (y1); \else \ifnum#2=0 \draw[edge_style, cRed] (xc) -- (y1); \else \ifnum#2=5 \draw[edge_style, cYellow] (xc) -- (y1); \fi \fi \fi
+            \ifnum#2=2 \draw[edge_style, cYellow] (xc) -- (y1); \else \ifnum#2=0 \draw[edge_style, cRed] (xc) -- (y1); \else \ifnum#2=5 \draw[edge_style, cYellow] (xc) -- (y1); \fi \fi \fi
             
             % 重边连线 (e2 和 e5)
             \ifnum#2=0
