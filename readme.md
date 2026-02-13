@@ -1,6 +1,6 @@
-# Kuratowski 定理的严谨证明与误区纠偏
+# Kuratowski & Vizing: 图论严谨证明集
 
-本项目提供图论中 Kuratowski 定理（平面图的充要条件）的严谨化证明流程与 TikZ 矢量示意图。
+本项目提供图论中 Kuratowski 定理（平面图充要条件）与 Vizing/Shannon 定理（边色数界限）的严谨化证明流程与 TikZ 矢量示意图。
 
 ### 🚩 项目初衷
 
@@ -9,11 +9,15 @@
 2. **强区间引理 (Strong Interval Lemma)** 的完备性证明。
 3. 对导致 **$K_{3,3}$ 或 $K_5$** 冲突的几何交叠情况进行精确分类。
 
-### 📂 文件说明
+📂 文件说明
 
-- **`main.tex`**: 完整的 LaTeX 源码。内嵌 31 份 TikZ 绘图代码，采用固化的坐标体系（90-330-270-210 系统）以确保拓扑关系的严谨性。
-- **`Kuratowski_Proof.pdf`**: 经由 XeLaTeX 编译生成的**完整严谨证明全文**。包含全部 24 页的细致分类讨论、强区间引理的完备逻辑推导及全量矢量化示意图。
-- **`LICENSE`**: 采用 CC BY-NC-SA 4.0 协议发布。
+### 1. 核心证明：Kuratowski 定理 (根目录)
+- **main.tex**: 包含 31 份 TikZ 绘图代码，采用固化的 90-330-270-210 坐标体系。
+- **Kuratowski_Proof.pdf**: 24 页证明，涵盖全部细致分类讨论与全量矢量示意图。
+
+### 2. 边染色专题：Vizing & Shannon 定理 (`/VizingProof`)
+- **VizingProof/main.tex**: 采用 60° 均分布局的 TikZ 绘图源码，确保逻辑图示的几何严谨。
+- **VizingProof/Vizing_Proof.pdf**: 8 页证明。重点展示了 $y_2=y_5$ 时的拓扑坍缩以及 $\Delta + \mu$ 的颜色分配策略。
 
 ### 🛠 编译建议
 

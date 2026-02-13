@@ -1,0 +1,656 @@
+% ==============================================================================
+% 项目名称：Vizing 定理的基础证明 & Shannon 定理
+% 作者署名：wibyuan
+% 许可协议：CC BY-NC-SA 4.0 (Attribution-NonCommercial-ShareAlike)
+% 编译环境：XeLaTeX (推荐使用 TeX Live 2023+ 完整版)
+% ------------------------------------------------------------------------------
+% 核心说明：
+% 1. 本文档旨在整理 Vizing 定理在简单图与多重图下的证明逻辑。
+% 2. 包含 Shannon 定理的证明思路。
+%
+% 权利声明：
+% 允许学术引用与非商业用途的分发。严禁在未注明原作者的情况下进行篡改、
+% 抹除水印或任何形式的商业洗稿行为。
+% ==============================================================================
+\documentclass[11pt, a4paper]{ctexart}
+
+% ==================== 页面与基础设置 ====================
+\usepackage[top=2.5cm, bottom=2.5cm, left=2.5cm, right=2.5cm]{geometry}
+\usepackage{tikz}
+\usetikzlibrary{shapes.geometric}
+\usetikzlibrary{calc}
+% 1. 在导言区加入宏包
+\usepackage[colorlinks=true, linkcolor=blue, urlcolor=blue]{hyperref}
+
+% --- 修正行间距设置 ---
+\usepackage{setspace} 
+\onehalfspacing % 设置为 1.5 倍行距，阅读更舒适
+% --------------------
+
+\usepackage[parfill]{parskip} % 段落间空行
+
+% ==================== 字体与颜色 ====================
+\usepackage{xcolor}
+\definecolor{zhihuBlue}{RGB}{0, 132, 255}
+\definecolor{darkGray}{RGB}{100, 100, 100}
+\usepackage{hyperref}
+\hypersetup{
+    colorlinks=true,
+    linkcolor=zhihuBlue,
+    urlcolor=zhihuBlue,
+    pdftitle={Vizing 定理的基础证明 \& Shannon 定理},
+    pdfauthor={wibyuan}
+}
+
+% ==================== 数学与图形 ====================
+\usepackage{amsmath, amssymb, amsthm}
+\usepackage{graphicx}
+\usepackage{float} % 用于固定图片位置
+
+% 定义定理环境
+\newtheorem{theorem}{定理}
+\newtheorem{lemma}{引理}
+\newtheorem{definition}{定义}
+\newtheorem{strategy}{策略} % 为适应本文内容增加
+
+% ==================== 页眉页脚与水印 ====================
+\usepackage{fancyhdr}
+\pagestyle{fancy}
+\fancyhf{}
+\cfoot{\thepage}
+\rfoot{\footnotesize \color{darkGray} Author: wibyuan (2026) | Not for Commercial Use}
+\renewcommand{\headrulewidth}{0pt}
+\renewcommand{\footrulewidth}{0.4pt}
+
+% ==================== 水印（替代 background 包） ====================
+\usepackage{eso-pic}
+
+\AddToShipoutPictureBG{%
+  \AtPageCenter{%
+    \makebox(0,0){%
+      \rotatebox{45}{%
+        \textcolor{black!5}{\fontsize{40}{40}\selectfont wibyuan @ Zhihu / GitHub}%
+      }%
+    }%
+  }%
+}
+
+% ==================== 正文开始 ====================
+\begin{document}
+
+% --- 标题块 ---
+\begin{center}
+    \vspace*{0cm}
+    {\huge \bfseries Vizing 定理的基础证明 \& Shannon 定理} \\[1em]
+    {\Large wibyuan} \\[0.5em]
+    %{\color{gray} 2026-01-15}
+    \vspace*{0cm}
+\end{center}
+
+\tableofcontents
+\newpage
+
+\section{前言}
+
+在图论基础概念略解中我们没证明这个定理，因为怕太长打断了。
+
+不过现在我们可以证明了。
+
+我查了，大部分中文笔记会略过这个定理的证明，可能是因为太基础了，不过这正好给了我水一篇文章的理由。早知道就把 Brooks 定理的证明单开一篇文章。
+
+\section{Vizing 定理及其扩展证明}
+
+\begin{theorem}[Vizing 定理]
+    对于任何一个简单图 $G$ ，如果它的最大度数为 $\Delta(G)$ ，那么它的边染色数 $\chi'(G)$ 要么是 $\Delta(G)$ ，要么是 $\Delta(G)+1$ 。
+\end{theorem}
+
+\subsection{证明思路}
+首先，对于任意一个图 $G$ ，由于它的度数最大的点延伸出的 $\Delta(G)$ 条边必须染成不同的颜色，所以我们必有 $\chi'(G)\ge \Delta(G)$ 。
+
+好那么我们尝试构造性地给出一个 $G$ 的 $\Delta(G)+1$ 边染色方案。
+
+\subsection{归纳设定}
+归纳边界是， 0 条边的图 $G$，色数 $\chi'(G)=0=\Delta (G)$
+
+假设对于任意 $m-1$ 条边的图 $G'$ ，不妨设它存在用不超过 $\Delta (G')$ 种颜色进行边染色的方案。
+
+现在，对于 $m$ 条边的图 $G$ ，去掉任何一条边 $e=\{x,y\}$ ，设 $G'=G-e$ ，显然去掉一条边之后，边色数不会更大，所以，由归纳假设必然有 $\chi'(G')\le \Delta(G)+1$ ，任意选取一个对 $G'$ 的色数不超过 $\Delta(G)+1$ 边染色方案。
+
+那么，就有这么一个事实， $x,y$ 至多有 $\Delta(G)-1$ 条边已经被染色，这意味着从 $x$ 或 $y$ 出发，都不可能集齐 $\Delta(G)+1$ 种颜色，此时，我们只需要从 $x$ 的邻边中取出任意一种没有被使用的颜色 $\alpha$ ，并从 $y$ 的邻边中取出任意一种没有被使用的颜色 $\beta$ 。
+
+如果存在一种取法使得 $\alpha=\beta$ ，即存在一种颜色，使得 $x,y$ 都不与这种颜色的边相邻，我们只需要将 $e$ 染成这种颜色即可。
+
+否则有 $\alpha\ne \beta$ 即 $x$ 和 $y$ 相邻的边取遍所有 $\Delta(G)+1$ 种颜色。
+
+\subsection{构造双色路}
+好的接下来我们考虑从 $x$ 出发，考虑仅仅通过颜色为 $\alpha$ 和 $\beta$ 的边，以及通过这些便能到达的点，形成的一个连通子图 $P$ ，显然这个连通子图，由于它的度数不超过 2，所以 $P$ 要么是一条路，要么是一个环。
+
+如果这个连通子图不包含 $y$ ，这就意味着，我们可以把在 $G_1$ 内的边染色进行交换，那么 $G'$ 的边染色仍然合法，且现在 $x$ 也缺失颜色 $\beta$ 了，把 $e$ 染成颜色 $\beta$ 即可。
+
+否则， $P$ 必定是一条路，起点为 $x$ 终点为 $y$ ，满足它上面的颜色只有 $\alpha$ 或 $\beta$ 交替。
+
+\begin{figure}[H]
+    \centering
+    \begin{tikzpicture}[
+        % --- 局部颜色定义 ---
+        /utils/exec={\definecolor{localRed}{RGB}{255, 0, 0}
+                     \definecolor{localGreen}{RGB}{0, 176, 80}},
+        % --- 样式定义 ---
+        vnode/.style={circle, draw=black, line width=1.5pt, fill=white, minimum size=0.8cm, inner sep=0pt, font=\large\bfseries},
+        thick_red/.style={line width=2.5pt, color=localRed},
+        thick_green/.style={line width=2.5pt, color=localGreen},
+        thick_black/.style={line width=2.5pt, color=black},
+        label_text/.style={font=\bfseries, align=center}
+    ]
+        % 坐标设置
+        \coordinate (x_pos) at (-2, 2);
+        \coordinate (y_pos) at (2, 2);
+        \coordinate (n1) at (-3.2, -0.5);
+        \coordinate (n2) at (0, -2.2);
+        \coordinate (n3) at (3.2, -0.5);
+
+        % 绘制边
+        \draw[thick_black] (x_pos) -- (y_pos) node[midway, above, label_text, yshift=3pt] {待染色};
+        \draw[thick_red] (x_pos) -- (n1);
+        \draw[thick_green] (n1) -- (n2);
+        \draw[thick_red] (n2) -- (n3);
+        \draw[thick_green] (n3) -- (y_pos);
+
+        % 绘制节点
+        \node[vnode] at (x_pos) {$x$};
+        \node[vnode] at (y_pos) {$y$};
+        \node[vnode] at (n1) {};
+        \node[vnode] at (n2) {};
+        \node[vnode] at (n3) {};
+
+        % 标签使用局部定义的颜色
+        \node[above=0.4cm, label_text] at (x_pos) {缺\textcolor{localGreen}{绿}};
+        \node[above=0.4cm, label_text] at (y_pos) {缺\textcolor{localRed}{红}};
+    \end{tikzpicture}
+    \caption{如图，途中，$x$ 发出的红绿边形成了一条到 $y$ 的路径（它必定有偶数条边），此时，不能只对一边反色来达到染色的目的}
+\end{figure}
+
+\subsection{构造 Vizing 扇}
+思想是这样的，既然 $e=\{x,y\}$ 暂时染不进去，我们去看看 $x$ 的其它邻居，看看能不能从那里借颜色。
+
+从 $x$ 的邻边中取出任意一种没有被使用的颜色 $\alpha$ ，并从 $y$ 的邻边中取出任意一种没有被使用的颜色 $\beta$ 。
+
+不妨设 $y_0=y$ ，其中 $e=\{x,y_0\}$ 这条边还没有染色，那么我们由一开始的定理，我们知道 $x$ 旁边一定连着一条颜色为 $\beta$ 的边，那么假设这条边的另一个端点为 $y_1$ 。
+
+好的现在我们强行把 $e_1=\{x,y_1\}$ 的颜色剥夺，然后把 $e=\{x,y\}$ 染成颜色 $\beta$ ，这显然不会破坏（除了被剥夺的边）图的边染色的合法性的。
+
+这个换位逻辑非常有趣，不过它会影响图的边着色，为了方便，我们在一个静态的图染色上定义 Vizing 扇，对于一个仅有 $e=\{x,y\}$ 未染色，其它边已经完成色数不超过 $\Delta(G)+1$ 的边染色的图 $G$ ，定义 Vizing 扇为 $x$ 的邻居序列 $y_0,y_1,\cdots,y_k$ ，满足：
+
+\begin{enumerate}
+    \item $y_0=y$
+    \item 假设 Vizing 扇已经构建到了 $y_0,y_1,\cdots,y_i$ ，取 $y_i$ 的邻边中，没有出现的一个颜色为 $\beta_i$ （这总是可以取到，因为色数有 $\Delta(G)+1$ 种，而 $y_i$ 已染色的邻边不超过 $\Delta(G)$ 条），如果 $x$ 中不存在颜色为 $\beta_i$ 的邻边，则称 Vizing 扇的构建因颜色不够而终止；
+    \item 否则 $x$ 中存在一条颜色为 $\beta_i$ 的邻边，如果它的另一个端点已经在 $y_1,y_2,\cdots,y_{i-1}$ 中出现过（显然不可能是 $y_0$ 因为它还没染色），则称 Vizing 扇的构建因为出现了重复的顶点而终止；
+    \item 否则，设这条邻边的另一个端点为 $y_{i+1}$ ，并继续构建 Vizing 扇。
+\end{enumerate}
+
+这里 Vizing 扇的构建显式地利用了简单图的性质，而由于 $x$ 的度数有限，Vizing 扇的构建也会在有限步以内停止，且原因必然是因为颜色不够或因为出现了重复顶点。
+
+\begin{figure}[H]
+    \centering
+    \begin{tikzpicture}[
+        % --- 局部颜色定义 ---
+        /utils/exec={
+            \definecolor{cRed}{RGB}{255, 0, 0}
+            \definecolor{cYellow}{RGB}{255, 192, 0}
+            \definecolor{cGreen}{RGB}{0, 176, 80}
+            \definecolor{cCyan}{RGB}{0, 176, 240}
+            \definecolor{cBlue}{RGB}{0, 112, 192}
+            \definecolor{cPurple}{RGB}{128, 0, 128} % 修正为标准紫色
+        },
+        % --- 样式定义 ---
+        vnode/.style={circle, draw=black, line width=1.5pt, fill=white, minimum size=0.8cm, inner sep=0pt, font=\large\bfseries},
+        edge_style/.style={line width=2pt},
+        label_style/.style={font=\bfseries, align=left}
+    ]
+        % 中心点 x
+        \node[vnode] (x) at (0,0) {$x$};
+
+        % 定义扇形顶点坐标 (半径 3.5cm)
+        \coordinate (y0) at (0:3.5);
+        \coordinate (y1) at (60:3.5);
+        \coordinate (y2) at (120:3.5);
+        \coordinate (y3) at (180:3.5);
+        \coordinate (y4) at (240:3.5);
+        \coordinate (y5) at (300:3.5);
+
+        % 绘制边 (严格执行逻辑：(x, y_i) 的颜色 = y_{i-1} 的缺失颜色 beta_{i-1})
+        \draw[edge_style, black] (x) -- (y0) node[midway,  above, font=\small\bfseries] {待染色};
+        \draw[edge_style, cRed] (x) -- (y1);    % 匹配 y0 缺红
+        \draw[edge_style, cYellow] (x) -- (y2); % 匹配 y1 缺黄
+        \draw[edge_style, cGreen] (x) -- (y3);  % 匹配 y2 缺绿
+        \draw[edge_style, cCyan] (x) -- (y4);   % 匹配 y3 缺蓝
+        \draw[edge_style, cPurple] (x) -- (y5); % 匹配 y4 缺紫 (修正此处颜色不统一问题)
+
+        % 绘制外部节点
+        \node[vnode] at (y0) {$y_0$};
+        \node[vnode] at (y1) {$y_1$};
+        \node[vnode] at (y2) {$y_2$};
+        \node[vnode] at (y3) {$y_3$};
+        \node[vnode] at (y4) {$y_4$};
+        \node[vnode] at (y5) {$y_5$};
+
+        % 添加节点旁的缺色标签 (方位定死)
+        \node[label_style, right=0.3cm] at (y0) {缺\textcolor{cRed}{红} ($\beta_0$)};
+        \node[label_style, right=0.3cm] at (y1) {缺\textcolor{cYellow}{黄} ($\beta_1$)};
+        \node[label_style, right=0.3cm] at (y2) {缺\textcolor{cGreen}{绿} ($\beta_2$)};
+        \node[label_style, right=0.3cm, yshift=-0.3cm] at (y3) {缺\textcolor{cCyan}{蓝} ($\beta_3$)};
+        \node[label_style, right=0.3cm] at (y4) {缺\textcolor{cPurple}{紫} ($\beta_4$)};
+        \node[label_style, right=0.3cm] at (y5) {缺\textcolor{cGreen}{绿} ($\beta_5$)};
+
+        % 底部补充说明
+        \node[font=\bfseries, yshift=-4.5cm] at (0,0) {其中 $\beta_2 = \beta_5$};
+
+    \end{tikzpicture}
+    \caption{如图，以下是因为出现重复顶点而停止的关于 $x$ 的 Vizing 扇的典型例子，其中可以看到，由于 $y_0$ 缺红，找到了连着红边的 $y_1$，然后由于 $y_1$ 缺黄，找到了连着黄边的 $y_2$，以此类推……最后可以看到，由于 $\beta_2$ 和 $\beta_5$ 都是绿色，Vizing 扇的构建因为顶点即将重复而停止}
+\end{figure}
+
+\subsection{旋转 Vizing 扇}
+更新图的边染色，对于所有 Vizing 扇上的点 $y_0,y_1,\cdots,y_k$ 。
+
+我们定义关于全图的 $G$ 的部分边染色方案 $C_0,C_1,\cdots,C_k$ 。
+
+其中 $C_0$ 就是我们一开始由归纳得出的那个只有 $\{x,y\}$ 没有参与染色的边染色方案。
+
+对于 $1\le i\le k$ ， $C_i$ 是在 $C_{i-1}$ 的基础上，通过将 $\{x,y_{i-1}\}$ 在 $C_i$ 中的颜色改成 $\{x,y_i\}$ 在 $C_i$ 中的颜色，并剥夺 $\{x,y_i\}$ 在 $C_i$ 中的染色。
+
+\begin{figure}[H]
+    \centering
+    \begin{tikzpicture}[
+        % --- 局部颜色定义 ---
+        /utils/exec={
+            \definecolor{cRed}{RGB}{255, 0, 0}
+            \definecolor{cYellow}{RGB}{255, 192, 0}
+            \definecolor{cGreen}{RGB}{0, 176, 80}
+            \definecolor{cCyan}{RGB}{0, 176, 240}
+            \definecolor{cBlue}{RGB}{0, 112, 192}
+            \definecolor{cPurple}{RGB}{128, 0, 128}
+        },
+        % --- 样式定义 ---
+        vnode/.style={circle, draw=black, line width=1.2pt, fill=white, minimum size=0.6cm, inner sep=0pt, font=\small\bfseries},
+        edge_style/.style={line width=1.8pt},
+        sublabel_style/.style={font=\large\bfseries}
+    ]
+
+    % 定义绘图宏：\drawfan{状态索引 k}{偏移 x}{偏移 y}
+    \newcommand{\drawfan}[3]{
+        \begin{scope}[shift={(#2,#3)}]
+            % 中心点 $x$
+            \node[vnode] (x) at (0,0) {$x$};
+            
+            \foreach \j in {0,...,5} {
+                \coordinate (y\j) at (\j*60:1.8);
+                
+                % 确定当前边的颜色逻辑
+                \pgfmathsetmacro{\edgecolor}{
+                    (\j == #1) ? "black" : (
+                        (\j < #1) ? (
+                            (\j == 0) ? "cRed" : (
+                                (\j == 1) ? "cYellow" : (
+                                    (\j == 2) ? "cGreen" : (
+                                        (\j == 3) ? "cCyan" : "cPurple"
+                                    )
+                                )
+                            )
+                        ) : (
+                            (\j == 1) ? "cRed" : (
+                                (\j == 2) ? "cYellow" : (
+                                    (\j == 3) ? "cGreen" : (
+                                        (\j == 4) ? "cCyan" : "cPurple"
+                                    )
+                                )
+                            )
+                        )
+                    )
+                }
+
+                % 绘制边
+                \draw[edge_style, \edgecolor] (x) -- (y\j);
+                
+                % 如果是当前待染色边，添加标注（去掉了 sloped，保持水平）
+                \ifnum\j=#1
+                    \node[font=\tiny\bfseries, above] at ($(x)!0.5!(y\j)$) {待染色};
+                \fi
+
+                % 绘制顶点
+                \node[vnode] at (y\j) {$y_{\j}$};
+            }
+            
+            % 状态标注
+            \node[sublabel_style, yshift=-2.5cm] at (0,0) {$C_{#1}$};
+        \end{scope}
+    }
+
+    % 布局 2 x 3 矩阵
+    \drawfan{0}{0}{0}   \drawfan{1}{5.5}{0}   \drawfan{2}{11}{0}
+    \drawfan{3}{0}{-5} \drawfan{4}{5.5}{-5} \drawfan{5}{11}{-5}
+
+    \end{tikzpicture}
+    \caption{Vizing 扇的旋转过程 $C_0 \to C_5$。每一轮旋转中，当前的待染色边 $(x, y_i)$ 与顺时针方向的下一条边交换颜色状态，从而将“缺色空位”沿扇形传递。}
+\end{figure}
+
+可以看到，对于任意 $C_i$ ，它目前的染色数不超过 $\Delta(G)+1$ ，且有且仅有 $\{x,y_i\}$ 未被染色。
+
+如果 Vizing 扇是由于颜色不够而停止的，则取出 $C_k$ 方案，此时我们发现 $x,y_k$ 的邻边都缺失颜色 $\beta_k$ ，将 $\{x,y_k\}$ 染色成 $\beta_k$ 即可。
+
+否则 Vizing 扇是因为出现了重复顶点而停止的。
+
+\subsection{用双色路导出矛盾}
+那么不妨设染色方案 $C_0$ 中颜色为 $\beta_k$ 的边的另一个端点为 $y_i$ 是那个出现在 Vizing 扇中的点，那么必有 $1\le i<k$ ，且 $\beta_{i-1}=\beta_k$ 。
+
+仍然设 $x$ 的邻边中未出现的颜色为 $\alpha$ ，由于度数，这样的颜色总是存在。
+
+我们考虑染色方案 $C_k$ ，此时 $x$ 邻边仍然缺失颜色 $\alpha$ 且 $y_k$ 邻边仍然缺失颜色 $\beta_k$ ，如果它们颜色相同，直接将 $\{x,y_k\}$ 染色成 $\alpha$ 即可，如果在该染色方案中 $x$ 到 $y_k$ 不存在 $\alpha\beta_k$ 双色交替路，那么直接反色即可进行边染色。
+
+否则，该染色方案中 $x$ 到 $y_k$ 存在 $\alpha\beta_k$ 双色交替路，那么连接 $x$ 的必然是一条颜色为 $\beta_k$ 的边，在 $C_k$ 中，这条边的另一端点就是 $y_{i-1}$ 。
+
+也就是在 $C_k$ 中， $y_k$ 到 $y_{i-1}$ 存在一条双色路 $P$ ，它不经过 $x$ ，其上的第一条边和最后一条边颜色都为 $\alpha$ 。
+
+\begin{figure}[H]
+    \centering
+    \begin{tikzpicture}[
+        % --- 局部颜色定义 ---
+        /utils/exec={
+            \definecolor{cRed}{RGB}{255, 0, 0}
+            \definecolor{cYellow}{RGB}{255, 192, 0}
+            \definecolor{cGreen}{RGB}{0, 176, 80}
+            \definecolor{cCyan}{RGB}{0, 176, 240}
+            \definecolor{cBlue}{RGB}{0, 112, 192}
+            \definecolor{cPink}{RGB}{255, 105, 180}
+            \definecolor{cPurple}{RGB}{128, 0, 128}
+        },
+        scale=0.8,
+        % --- 样式定义 ---
+        vnode/.style={circle, draw=black, line width=1.2pt, fill=white, minimum size=0.6cm, inner sep=0pt, font=\small\bfseries},
+        edge_style/.style={line width=1.8pt},
+        path_style/.style={line width=2.5pt},
+        label_style/.style={font=\bfseries, align=center}
+    ]
+
+    % 1. 坐标定义 (严格 60 度均分，R=3.5)
+    \coordinate (x_coord) at (0,0);
+    \foreach \j in {0,...,5} {
+        \coordinate (y\j) at (\j*60:3.5);
+    }
+
+    % 2. 绘制底层路径与边 (确保它们在 Node 下方)
+    
+    % 绘制外部粉绿交替路径 P (外部绕行 y5 -> y4 外部 -> y3 外部 -> y2)
+    \coordinate (p1) at (270:4.5);
+    \coordinate (p2) at (225:5.0);
+    \coordinate (p3) at (180:5.5);
+    \coordinate (p4) at (135:5.0);
+    %\coordinate (p5) at (90:4.5);
+
+    \draw[path_style, cPink] (y5) -- (p1);
+    \draw[path_style, cGreen] (p1) -- (p2);
+    \draw[path_style, cPink] (p2) -- (p3);
+    \draw[path_style, cGreen] (p3) -- (p4);
+    %\draw[path_style, cPink] (p4) -- (p5);
+    \draw[path_style, cPink] (p4) -- (y2);
+
+    % 绘制扇形的边
+    \draw[edge_style, cRed] (x_coord) -- (y0);
+    \draw[edge_style, cYellow] (x_coord) -- (y1);
+    \draw[edge_style, cGreen] (x_coord) -- (y2);
+    \draw[edge_style, cCyan] (x_coord) -- (y3);
+    \draw[edge_style, cPurple] (x_coord) -- (y4);
+    % 待染色边
+    \draw[edge_style, black] (x_coord) -- node[font=\bfseries] {待染色} (y5);
+
+    % 3. 绘制顶层节点 (覆盖所有交叉线)
+    \node[vnode] (x) at (x_coord) {$x$};
+    \foreach \j in {0,...,5} {
+        \node[vnode] at (y\j) {$y_{\j}$};
+    }
+    % 路径 P 上的匿名节点
+    \foreach \p in {p1, p2, p3, p4} {
+        \node[vnode, minimum size=0.4cm] at (\p) {};
+    }
+
+    % 4. 文本标注
+    \node[label_style, above=0.5 cm] at (x) {缺\textcolor{cPink}{粉色} ($\alpha$)};
+    \node[label_style, above=0.5cm, xshift=0.5cm] at (y5) {缺\textcolor{cGreen}{绿} ($\beta_5=\beta_2$)};
+    \node[font=\huge\bfseries] at (4,-3) {$C_5$};
+    \node[font=\huge\bfseries, left=1cm] at (p3) {$P$};
+
+    \end{tikzpicture}
+    \caption{如图是 $k=5$ 时候 $C_5$ 的一个例子（此时 $i=3$），考虑 $x$ 缺少粉色（$\alpha$），此时，如果 $y_5$ 到 $x$ 不存在粉色和 $\beta_5$（绿色）交替的路径，那么只需通过反色即可进行边染色，因此必定存在这样的路，而且必定通过 $y_2$，也就是说，存在 $y_5$ 到 $y_2$ 的粉绿交替的路 $P$。}
+\end{figure}
+
+再考虑染色方案 $C_{i-1}$ 的情况，显然，由于不同的染色方案只会动 Vizing 扇上的边，考虑从 $y_{i-1}$ 出发，考虑仅仅通过颜色为 $\alpha$ 和 $\beta_k$ 的边，以及通过这些边能到达的点，形成的一个连通子图，由于 $P$ 的存在，子图从 $y_{i-1}$ 可以延伸到 $y_k$ （由边染色的性质，从中间节点无法延伸其它路径），而且，由于 $y_k$ 不存在颜色为 $\beta_k$ 的邻边，所以在 $P$ 的端点处，无法继续延伸。
+
+因此，所求子图就是 $P$ ，它与 $x$ 不连通，我们把 $P$ 进行 $\alpha\beta_k$ 反色，将 $\{x,y_{i-1}\}$ 填色 $\alpha$ 即可得到合法的染色方案。
+
+\begin{figure}[H]
+    \centering
+    \begin{tikzpicture}[
+        % --- 局部颜色定义 (严格继承自 Figure 4) ---
+        /utils/exec={
+            \definecolor{cRed}{RGB}{255, 0, 0}
+            \definecolor{cYellow}{RGB}{255, 192, 0}
+            \definecolor{cGreen}{RGB}{0, 176, 80}
+            \definecolor{cCyan}{RGB}{0, 176, 240}
+            %\definecolor{cBlue}{RGB}{0, 112, 192}
+            \definecolor{cPink}{RGB}{255, 105, 180}
+            \definecolor{cPurple}{RGB}{128, 0, 128}
+        },
+        % --- 样式定义 (严格对齐 Figure 4 标准) ---
+        vnode/.style={circle, draw=black, line width=1.2pt, fill=white, minimum size=0.5cm, inner sep=0pt, font=\small\bfseries},
+        scale=0.9,
+        edge_style/.style={line width=1.8pt},
+        path_style/.style={line width=2.5pt},
+        label_style/.style={font=\bfseries, align=center}
+    ]
+
+    % 定义绘图宏：\drawvizing{偏移x}{反色标志 0/1}{状态文本}
+    \newcommand{\drawvizing}[3]{
+        \begin{scope}[shift={(#1,0)}]
+            % 1. 坐标定义 (R=2.2 以确保不溢出页边距)
+            \coordinate (x_coord) at (0,0);
+            \foreach \j in {0,...,5} {
+                \coordinate (y\j) at (\j*60:2.2);
+            }
+            % 路径点 (相对于扇形外部绕行)
+            \coordinate (p1) at (270:3.2); \coordinate (p2) at (225:3.6);
+            \coordinate (p3) at (180:3.8); \coordinate (p4) at (135:3.6);
+
+            % 2. 绘制底层路径 (体现反色逻辑)
+            \ifnum#2=0
+                \draw[path_style, cPink] (y5) -- (p1); \draw[path_style, cGreen] (p1) -- (p2);
+                \draw[path_style, cPink] (p2) -- (p3); \draw[path_style, cGreen] (p3) -- (p4);
+                \draw[path_style, cPink] (p4) -- (y2);
+            \else
+                \draw[path_style, cGreen] (y5) -- (p1); \draw[path_style, cPink] (p1) -- (p2);
+                \draw[path_style, cGreen] (p2) -- (p3); \draw[path_style, cPink] (p3) -- (p4);
+                \draw[path_style, cGreen] (p4) -- (y2);
+            \fi
+
+            % 3. 绘制扇形的边 (C2 状态染色逻辑)
+            \draw[edge_style, cRed] (x_coord) -- (y0);
+            \draw[edge_style, cYellow] (x_coord) -- (y1);
+            
+            \ifnum#2=0
+                \draw[edge_style, black] (x_coord) -- node[pos=0.6,font=\bfseries] {待染色} (y2);
+            \else
+                \draw[edge_style, cPink] (x_coord) -- (y2); % 右图完成绿色染色
+            \fi
+            
+            \draw[edge_style, cGreen] (x_coord) -- (y3);
+            \draw[edge_style, cCyan] (x_coord) -- (y4);
+            \draw[edge_style, cPurple] (x_coord) -- (y5);
+
+            % 4. 最后绘制顶层节点 (确保覆盖粗线)
+            \node[vnode] (x) at (x_coord) {$x$};
+            \foreach \j in {0,...,5} { \node[vnode] at (y\j) {$y_{\j}$}; }
+            \foreach \p in {p1, p2, p3, p4} { \node[vnode, minimum size=0.35cm] at (\p) {}; }
+
+            % 5. 逻辑标注 (保持 Figure 4 字体与公式格式)
+            
+            \ifnum#2=0
+                \node[label_style, above=0.3cm] at (x) {缺\textcolor{cPink}{粉色} ($\alpha$)};
+            \else
+                \node[label_style, above=0.3cm] at (x) {染\textcolor{cPink}{粉色} ($\alpha$)};
+            \fi
+            \ifnum#2=0
+                \node[label_style, above=0.3cm, xshift=0.1cm] at (y5) {缺\textcolor{cGreen}{绿} ($\beta_5=\beta_2$)};
+            \else
+                \node[label_style, above=0.3cm, xshift=0.1cm] at (y5) {缺\textcolor{cPink}{粉} };
+            \fi
+            \node[font=\huge\bfseries] at (2.5,-3) {#3};
+            \node[font=\huge\bfseries, left=0.6cm] at (p3) {$P$};
+        \end{scope}
+    }
+
+    % 绘制并排对比图
+    \drawvizing{0}{0}{$C_2$}
+    \drawvizing{9}{1}{$C_2'$}
+
+    \end{tikzpicture}
+    \caption{如图，那么如果 $P$ 存在，在 $C_2$ 的时候，我们就可以利用这条 $P$，证明从 $y_2$ 出发的粉绿交替路径不会到达 $x$，因此可以把路径反色，然后得到合法的染色方案。}
+\end{figure}
+
+由于只要归纳假设成立，我们总能构造染色方案使得边色数不超过 $\Delta(G)+1$ ，因此，我们就证明了对于任意简单图 $G$ ，它的边染色数不超过 $\Delta(G)+1$ 。
+
+因此对于简单图 $G$ ，我们有 $\chi'(G)\in\{\Delta(G),\Delta(G)+1\}$
+
+\subsection{多重图上的拓展表述}
+
+对于无向多重图（即无自环，但有重边） $G$ ， $\chi'(G)\ge \Delta(G)$ 仍然适用，但 $\chi'(G)\le \Delta(G)+1$ 不再成立。
+
+对于无向多重图，我们有如下的扩展表述，设 $G$ 中边的最大重数为 $\mu(G)$ ，则总有 $\Delta(G)\le \chi'(G)\le \Delta(G)+\mu(G)$ 。
+
+\subsection{扩展表述的证明思路}
+
+简单图上的 Vizing 定理的证明之所以在多重图上不再成立，一个核心原因就是 Vizing 扇的构建会出问题，具体而言，当我们归纳的时候，如果对 $x$ 再次构建 $e_0,e_1,\cdots,e_k$ 的 Vizing 扇（由于出现重边，这次我们以边来编号），当 Vizing 扇的构建因为出现重复颜色而停止的时候，我们同样进行旋转，比对 $C_k$ 和 $C_{i-1}$ 的状态。
+
+此时，在逻辑顺下来的时候，其它一切正常，除了一个地方，那就是，如果 $e_k$ 是第一个选取缺失颜色重复的点，并且发现缺失颜色恰好是 $e_i$ 的颜色（这意味着 $e_k$ 和 $e_{i-1}$ 选取的缺失颜色重复了），那么如果 $e_k$ 和 $e_{i-1}$ 是相同两个顶点的多重边，即 $y_{i-1}=y_k$ ，那么 $y_k=y_{i-1}$ ，原本的证明就会出问题。
+
+\begin{figure}[H]
+    \centering
+    \begin{tikzpicture}[
+        % --- 局部颜色定义 ---
+        /utils/exec={
+            \definecolor{cRed}{RGB}{255, 0, 0}
+            \definecolor{cYellow}{RGB}{255, 192, 0}
+            \definecolor{cGreen}{RGB}{0, 176, 80}
+            \definecolor{cCyan}{RGB}{0, 176, 240}
+            \definecolor{cBlue}{RGB}{0, 112, 192}
+            \definecolor{cPink}{RGB}{255, 105, 180}
+            \definecolor{cPurple}{RGB}{128, 0, 128}
+        },
+        % --- 样式定义 ---
+        vnode/.style={circle, draw=black, line width=1.2pt, fill=white, minimum size=0.5cm, inner sep=0pt, font=\tiny\bfseries},
+        edge_style/.style={line width=1.5pt},
+        label_style/.style={font=\bfseries, align=center}
+    ]
+
+    % 定义绘图宏：\drawmultifan{偏移x}{状态索引 k}{标注文本}
+    \newcommand{\drawmultifan}[3]{
+        \begin{scope}[shift={(#1,0)}]
+            % 1. 坐标定义 (R=2.0)
+            \coordinate (xc) at (0,0);
+            \coordinate (y0) at (0:2.0);
+            \coordinate (y1) at (60:2.0);
+            \coordinate (y25) at (120:2.0); % 重合点
+            \coordinate (y3) at (180:2.0);
+            \coordinate (y4) at (240:2.0);
+
+            % 2. 绘制底层连线 (旋转染色逻辑)
+            % 逻辑：在 C_k 下，边 e_k 待染，e_j (j<k) 染 beta_{j+1}，e_j (j>k) 染 beta_j
+            
+            % e0
+            \ifnum#2=0 \draw[edge_style, black] (xc) -- node[pos=0.6, font=\tiny\bfseries] {待染色} (y0); \else \draw[edge_style, cRed] (xc) -- (y0); \fi
+            % e1
+            \ifnum#2=2 \draw[edge_style, cRed] (xc) -- (y1); \else \ifnum#2=0 \draw[edge_style, cRed] (xc) -- (y1); \else \ifnum#2=5 \draw[edge_style, cYellow] (xc) -- (y1); \fi \fi \fi
+            
+            % 重边连线 (e2 和 e5)
+            \ifnum#2=0
+                \draw[edge_style, cYellow] (xc) to[bend left=15] (y25);
+                \draw[edge_style, cPurple] (xc) to[bend right=15] (y25);
+            \fi
+            \ifnum#2=2
+                \draw[edge_style, black] (xc) to[bend left=15] node[pos=0.5, font=\tiny\bfseries] {待染色} (y25);
+                \draw[edge_style, cPurple] (xc) to[bend right=15] (y25);
+            \fi
+            \ifnum#2=5
+                \draw[edge_style, cGreen] (xc) to[bend left=15] (y25);
+                \draw[edge_style, black] (xc) to[bend right=15] node[pos=0.5,  font=\tiny\bfseries] {待染色} (y25);
+            \fi
+
+            % e3, e4
+            \ifnum#2=0 \draw[edge_style, cGreen] (xc) -- (y3); \draw[edge_style, cCyan] (xc) -- (y4); \fi
+            \ifnum#2=2 \draw[edge_style, cGreen] (xc) -- (y3); \draw[edge_style, cCyan] (xc) -- (y4); \fi
+            \ifnum#2=5 \draw[edge_style, cCyan] (xc) -- (y3); \draw[edge_style, cPurple] (xc) -- (y4); \fi
+
+            % 3. 顶层节点
+            \node[vnode] at (xc) {$x$};
+            \node[vnode] at (y0) {$y_0$}; \node[vnode] at (y1) {$y_1$};
+            \node[vnode] at (y25) {$y_{2,5}$}; 
+            \node[vnode] at (y3) {$y_3$}; \node[vnode] at (y4) {$y_4$};
+
+            % 4. 逻辑标注
+            \node[font=\Large\bfseries] at (2,-1.5) {#3};
+            \ifnum#2=5
+                \node[label_style, scale=0.7, above=0.3cm] at (y25) {$\beta_2 = \beta_5$ 冲突};
+            \fi
+        \end{scope}
+    }
+
+    \drawmultifan{0}{0}{$C_0$}
+    \drawmultifan{5.5}{2}{$C_2$}
+    \drawmultifan{11}{5}{$C_5$}
+
+    \end{tikzpicture}
+    \caption{重边情形下 Vizing 扇的演化：从 $C_0$ 开始，待染色边沿顺时针方向传递。当旋转至 $C_5$ 时，由于 $y_2$ 与 $y_5$ 物理重合，导致缺失颜色 $\beta_2 = \beta_5$，构建 Vizing 扇的互异性前提消失，双色路归谬逻辑失效。}
+\end{figure}
+
+简单来讲，原本的证明隐含了这样一个意思： $y_{i-1}$ 和 $y_k$ 之间能否构建出双色路，分别对应了 $C_{i-1},C_{k}$ 两种染色方案可否通过简单的变换得到完整染色方案，而当 $y_{i-1}=y_k$ 可能发生时，这个逻辑自然走不通了。
+
+当然，我们也发现了诀窍，那就是只要我们总是选取颜色，使得构建边 $e_i$ 时，选取的“缺失颜色”与其所有可能的重边都不相同，那么我们总是可以完成 Vizing 扇的构建，并使得这个双色链的证明逻辑有效，那么我们并不关心其它地方有多少重边，我们只希望，如果 $e_k$ 是第一个选取缺失颜色重复的点，并且发现缺失颜色恰好是 $e_i$ 的颜色，那么 $e_k$ 和 $e_{i-1}$ 不要是重边。
+
+简而言之，就是在构建 Vizing 扇的时候，新加入一条重边，选取的缺失颜色不要与旧的重边相同。
+
+那么，当我们调高归纳边界，尝试归纳证明 $\chi'(G)\le \Delta(G)+\mu(G)$ 的时候，对于每个点，我们总是有 $\mu(G)$ 种颜色选择（即除去至多 $\Delta(G)$ 条染色边外的缺失颜色选择），刚好可以让 $x$ 在构建 Vizing 扇的时候，新加入一条重边，选取的缺失颜色不会与旧的重边相同。
+
+依照这个思路，即可证明 Vizing 定理在多重图上的扩展。
+
+\section{Shannon 定理及其证明}
+
+\begin{theorem}[Shannon 定理]
+    设 $G$ 为一个无自环的无向多重图，其最大度数为 $\Delta(G)$。则该图的边色数 $\chi'(G)$ 始终满足以下不等式：
+    $$\Delta(G) \le \chi'(G) \le \left\lfloor \frac{3}{2} \Delta(G) \right\rfloor$$
+\end{theorem}
+
+\subsection{证明思路}
+
+显然 $\chi'(G)\ge \Delta(G)$ 仍然成立，之前已经证明了，是因为一个点连接的所有边都要染成不同的颜色。
+
+$\chi'(G)\le\lfloor1.5\Delta(G)\rfloor$ 我们同样采取归纳证明的策略。
+
+它的证明其实是拿两种边染色策略凑出来的。
+
+归纳边界是对于 0 条边的图， $\chi'(G)=\Delta(G)=0$ ，刚好满足条件。
+
+归纳假设对于不超过 $m-1$ 条边的图，不等式成立。
+
+好那么对于 $m$ 条边的图 $G$ ，我们采取的策略是，任意选取一个有边的点对 $(u,v)$ ，然后将它的多重边（设重数为 $\mu(u,v)$ ）删掉一条边，考虑得到的子图，那么该子图由归纳假设是可以在 $\lfloor1.5\Delta(G)\rfloor$ 条边内染色的。
+
+好现在我们考虑我们的染色策略：
+
+
+\begin{enumerate}
+    \item 沿用我们的 Vizing 定理的思路，加入这条边，旋转 Vizing 扇，给出足够的宽裕让我们导出双色链，那么这个策略，我们仍然是给出 $\Delta(G)+\mu(u,v)$ 的边色数宽裕就够了，总的来说，我们可以在色数不超过 $\max(\lfloor1.5\Delta(G)\rfloor,\Delta(G)+\mu(u,v))$ 的前提下进行染色。
+    \item 直接计数，注意到如果我们直接对加入的这条边染色，使得 $u,v$ 两边延伸出的至多 $d(u)+d(v)-\mu(u,v)$ 条边（容斥原理，减去 $(u,v)$ 内部边一次）（设 $d(u)$ 为 $u$ 的度数）都染成不同的颜色，其它不变，那么总的来说，我们可以在色数不超过 $\max(\lfloor1.5\Delta(G)\rfloor,2\Delta(G)-\mu(u,v))$ 的前提下进行染色（即 $d(u),d(v)\le \Delta(G)$ ）。
+\end{enumerate}
+
+好的，如果我们在 $\mu(u,v)\le 0.5\Delta(G)$ 时采取第一种策略，而在 $\mu(u,v)>0.5\Delta(G)$ 时采取第二种策略，由于染色的数目是整数，我们总是能够在 $\lfloor1.5\Delta(G)\rfloor$ 种颜色内对 $G$ 进行边染色。
+
+那么也就归纳证明了 Shannon 定理。
+
+
+\end{document}
